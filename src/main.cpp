@@ -7,7 +7,7 @@
 
 // Enable/disable serial debug output
 #define SERIAL_DEBUG_OUTPUT 1
-#define HI_SPEED_DEBUG 0
+#define HI_SPEED_DEBUG 1
 
 #define PIN_BAT_VOLT 4
 
