@@ -1,29 +1,77 @@
 clear all; close all; clc;
 % Enhanced pressure log parser and analyzer
 
-read_type = "log"
+%% Choose between reading a log file from serial output or serial direct
+%read_type = "log"
 read_type = "serial"
 
-filename = 'log_12_hs.txt';
-lines = readlines(filename);
+if read_type == "serial"
+    % === Set up serial port ===
+    %port = "COM3"; % <-- Change to your serial port
+    %port = "/dev/ttyUSB0"
+    port = "/dev/ttyACM0"
+    baud = 115200; % <-- Change to your device's baud rate
+    s = serialport(port, baud);
+    configureTerminator(s, "LF");
+    flush(s); % clear buffer
+    
+    % === Send start command ===
+    writeline(s, "start");  % <-- Adjust if a different command is used
+    
+    % === Initialize storage ===
+    loop_time = [];
+    pressure = [];
+    
+    disp("Reading from serial...");
 
-loop_time = [];
-pressure = [];
-
-% === Parse the log file ===
-for i = 1:length(lines)
-    line = strtrim(lines(i));
-    if line == ""
-        continue;
-    end
-    time_match = regexp(line, 'Loop Time: ([\d\.]+)', 'tokens');
-    pressure_match = regexp(line, 'Pressure: ([\d\.]+)', 'tokens');
-    if ~isempty(time_match) && ~isempty(pressure_match)
-        if str2double(pressure_match{1}{1}) >= 200
-            break;
+    % === Read until pressure >= 200 or timeout ===
+    tic;
+    while true
+        if s.NumBytesAvailable > 0
+            line = strtrim(readline(s));
+            time_match = regexp(line, 'Loop Time: ([\d\.]+)', 'tokens');
+            pressure_match = regexp(line, 'Pressure: ([\d\.]+)', 'tokens');
+    
+            if ~isempty(time_match) && ~isempty(pressure_match)
+                p = str2double(pressure_match{1}{1});
+                t = str2double(time_match{1}{1});
+    
+                if p >= 200
+                    disp("Stopping: pressure threshold reached.");
+                    break;
+                end
+    
+                loop_time(end+1) = t;
+                pressure(end+1) = p;
+            end
         end
-        loop_time(end+1) = str2double(time_match{1}{1});
-        pressure(end+1) = str2double(pressure_match{1}{1});
+    end
+    
+    
+    % === Close serial port ===
+    clear s;
+else
+    filename = 'log_12_hs.txt';
+    lines = readlines(filename);
+    
+    loop_time = [];
+    pressure = [];
+    
+    % === Parse the log file ===
+    for i = 1:length(lines)
+        line = strtrim(lines(i));
+        if line == ""
+            continue;
+        end
+        time_match = regexp(line, 'Loop Time: ([\d\.]+)', 'tokens');
+        pressure_match = regexp(line, 'Pressure: ([\d\.]+)', 'tokens');
+        if ~isempty(time_match) && ~isempty(pressure_match)
+            if str2double(pressure_match{1}{1}) >= 200
+                break;
+            end
+            loop_time(end+1) = str2double(time_match{1}{1});
+            pressure(end+1) = str2double(pressure_match{1}{1});
+        end
     end
 end
 

@@ -7,7 +7,7 @@
 
 // Enable/disable serial debug output
 #define SERIAL_DEBUG_OUTPUT 1
-#define HI_SPEED_DEBUG 0
+#define HI_SPEED_DEBUG 1
 
 #define PIN_BAT_VOLT 4
 
@@ -54,6 +54,8 @@ double graphData[GRAPH_WIDTH]; // Array to store pressure values for plotting
 int graphIndex = 0;
 
 void calibratePressureSensor(){
+    // Clear and redraw graph area
+    tft.fillRect(0, 0, GRAPH_WIDTH, 240, TFT_BLACK);
     tft.setCursor(0, GRAPH_HEIGHT + 10);
     tft.setTextColor(TFT_PURPLE, TFT_BLACK);
     tft.printf("Atmos: %19s", "RELEASING");
@@ -200,6 +202,26 @@ void loop(){
 
     if(calibrateFlag) calibratePressureSensor();
 
+    if (Serial.available() > 0) {
+    String command = Serial.readStringUntil('\n');
+    command.trim(); // remove whitespace and newline
+    if (command == "start") {
+        #if SERIAL_DEBUG_OUTPUT
+            Serial.println("Received serial start command.");
+        #endif
+        if (!calibrateFlag && !startFlag) {
+            startFlag = 1;
+            drawOnce = 1;
+        }
+    } else if (command == "stop") {
+        #if SERIAL_DEBUG_OUTPUT
+            Serial.println("Received serial stop command.");
+        #endif
+        startFlag = 0;
+        drawOnce = 1;
+    }
+}
+
     // Read and process pressure sensor value (torr/mmHg)
     input = mpr.readPressure(TORR) - atmos; // Subtract atmospheric calibration
 
@@ -212,6 +234,18 @@ void loop(){
     digitalWrite(DRIVER_PIN, startFlag ? HIGH : LOW);
 
     #if HI_SPEED_DEBUG
+        if (drawOnce){
+            // Clear and redraw graph area
+            tft.fillRect(0, 0, GRAPH_WIDTH, 240, TFT_CYAN);
+            tft.setTextSize(6);
+            tft.setTextColor(TFT_BLACK, TFT_CYAN);
+            tft.setCursor(18, 18);
+            tft.println("HI-SPEED");
+            tft.setCursor(90, 100);
+            tft.println("MODE");
+            tft.setTextSize(2);
+            drawOnce = 0;
+        }
         Serial.printf("Loop Step: %.4f | Loop Time: %.4f | Pressure: %.8f\n", dT, loopTime, input);
     #else
         for(int i = 1, j = graphIndex; i < GRAPH_WIDTH; i++)
