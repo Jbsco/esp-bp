@@ -5,43 +5,37 @@
 #include <SparkFun_MicroPressure.h>
 #include <cmath>
 
-#define SERIAL_DEBUG_OUTPUT 0 // Enable/disable serial debug output
+// Enable/disable serial debug output
+#define SERIAL_DEBUG_OUTPUT 0
 
 #define PIN_BAT_VOLT 4
 
-// Buttons
+// Solenoid & pump pins
+// To gates of IRLB3813PbF FETs or similar
+#define SOLENOID_PIN 21 // GPIO pin to control pressure solenoid
+#define DRIVER_PIN 16 // GPIO pin to control pump driver
+
+// Button pins
 #define PIN_BUTTON_1 0
 #define PIN_BUTTON_2 14
-int startFlag = 0, calibrateFlag = 0;
+int startFlag = 0, calibrateFlag = 0, drawOnce = 0;
 
 // Using the Sparkfun Qwiic Micropressure sensor, info available at:
 // https://learn.sparkfun.com/tutorials/sparkfun-qwiic-micropressure-hookup-guide
-// I2C
+// I2C pins
 #define I2C_ADDRESS 0x18
 #define SDA_PIN 43
 #define SCL_PIN 44
-// When pressure sensor is ready to read this pin is high:
 #define MEASURE_RDY 18
 
-/* Initialize Constructor
- * Optional parameters:
- *  - EOC_PIN: End Of Conversion (defualt: -1)
- *  - RST_PIN: Reset (defualt: -1)
- *  - MIN_PSI: Minimum Pressure (default: 0 PSI)
- *  - MAX_PSI: Maximum Pressure (default: 25 PSI)
- */
-//SparkFun_MicroPressure mpr(EOC_PIN, RST_PIN, MIN_PSI, MAX_PSI);
+// SparkFun_MicroPressure mpr(EOC_PIN, RST_PIN, MIN_PSI, MAX_PSI);
 SparkFun_MicroPressure mpr(MEASURE_RDY, -1, 0, 4); // Use EOC, no reset pin, max pressure 4 PSI
-double atmos = 0; // atmospheric pressure to calibrate against
 
+// Global variables
+double atmos = 0; // Calibrated atmospheric pressure
 double loopTime; // Timestamp
-double dT = 0; // Timestep
-String response;
+int dT = 0; // Timestep
 
-#define SOLENOID_PIN 21 // GPIO pin to control pressure solenoid
-#define DRIVER_PIN 16 // GPIO pin to control pump driver
-bool solenoidState = 0;
-bool driverState = 0;
 
 // PID parameters
 double setpoint = 100; // Reference pressure
@@ -55,7 +49,8 @@ PID myPID(&input, &output, &setpoint, kp, ki, kd, REVERSE);
 TFT_eSPI tft = TFT_eSPI();
 #define GRAPH_HEIGHT 70
 #define GRAPH_WIDTH 320
-double graphData[GRAPH_WIDTH]; // Array to store pH values for plotting
+double graphData[GRAPH_WIDTH]; // Array to store pressure values for plotting
+int graphIndex = 0;
 
 void calibratePressureSensor(){
     tft.setCursor(0, GRAPH_HEIGHT + 10);
@@ -76,7 +71,7 @@ void calibratePressureSensor(){
         // Display pressure value
         tft.setCursor(0, GRAPH_HEIGHT + 30);
         tft.printf("Current Pressure: %8.3f", check1);
-        if (abs(check1 - check2) <= 0.01) min--;
+        if(abs(check1 - check2) <= 0.01) min--;
         // Fill percentage bar
         tft.fillRect(0, GRAPH_HEIGHT + 70, (50 - min) * (GRAPH_WIDTH / 50.0), GRAPH_HEIGHT + 85, TFT_PURPLE);
         delay(5);
@@ -84,7 +79,7 @@ void calibratePressureSensor(){
         // Display pressure value
         tft.setCursor(0, GRAPH_HEIGHT + 50);
         tft.printf("Current Pressure: %8.3f", check2);
-        if (abs(check1 - check2) <= 0.01) min--;
+        if(abs(check1 - check2) <= 0.01) min--;
         // Fill percentage bar
         tft.fillRect(0, GRAPH_HEIGHT + 70, (50 - min) * (GRAPH_WIDTH / 50.0), GRAPH_HEIGHT + 85, TFT_PURPLE);
         delay(5);
@@ -107,6 +102,8 @@ void calibratePressureSensor(){
         tft.fillRect(0, GRAPH_HEIGHT + 70, i * (GRAPH_WIDTH / 100.0), GRAPH_HEIGHT + 85, TFT_CYAN);
     }
     atmos /= 100;
+    // Clear and redraw graph area
+    tft.fillRect(0, 0, GRAPH_WIDTH, GRAPH_HEIGHT + 1, TFT_BLACK);
     tft.setCursor(0, GRAPH_HEIGHT + 30);
     tft.printf("Current Pressure: %8.3f", atmos);
 
@@ -115,6 +112,7 @@ void calibratePressureSensor(){
         Serial.printf("Calibrated pressure sensor at %.4f.\n", atmos);
     #endif
     calibrateFlag = 0;
+    drawOnce = 1;
 }
 
 void IRAM_ATTR buttonISR1(){
@@ -126,6 +124,7 @@ void IRAM_ATTR buttonISR1(){
             Serial.println("Starting pressurize!");
         #endif
         startFlag = 1;
+        drawOnce = 1;
     }
 }
 
@@ -135,10 +134,13 @@ void IRAM_ATTR buttonISR2(){
     #endif
     startFlag = 0;
     calibrateFlag = 1;
+    drawOnce = 1;
 }
 
 void setup() {
-    Serial.begin(115200);
+    #if SERIAL_DEBUG_OUTPUT
+        Serial.begin(115200);
+    #endif
 
     // INPUT INITIALIZATION
     Wire.begin(SDA_PIN, SCL_PIN);
@@ -174,6 +176,7 @@ void setup() {
     tft.setTextDatum(TL_DATUM);
     tft.setCursor(0, 5);
     tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    // "It's me, ya boi"
     tft.printf("Programmed by: %11s", "Jacob Seman");
     tft.setCursor(0, 25);
     tft.printf("%26s", "ECEN4532 DSP Laboratory");
@@ -190,8 +193,9 @@ void setup() {
 }
 
 void loop(){
-    dT = millis() / 1000.0 - loopTime;
-    loopTime = millis() / 1000.0;
+    unsigned long now = millis();
+    dT = now - (unsigned long)(loopTime * 1000);
+    loopTime = now * 0.001;
 
     if(calibrateFlag) calibratePressureSensor();
 
@@ -201,47 +205,52 @@ void loop(){
     // Run PID computation
     //myPID.Compute(); // TODO: keep increase constant linear
 
-    // Control solenoid
-    if (input >= 200.0) startFlag = 0;
-    digitalWrite(SOLENOID_PIN, (startFlag && not calibrateFlag) ? HIGH : LOW);
-    digitalWrite(DRIVER_PIN, (startFlag && not calibrateFlag) ? HIGH : LOW);
+    // Control solenoids
+    if (input >= 200) startFlag = 0;
+    digitalWrite(SOLENOID_PIN, startFlag ? HIGH : LOW);
+    digitalWrite(DRIVER_PIN, startFlag ? HIGH : LOW);
 
+    for(int i = 1, j = graphIndex; i < GRAPH_WIDTH; i++)
+        // Clear and redraw graph area
+        tft.drawPixel(i - 1, GRAPH_HEIGHT - ((int)(graphData[i] * 0.35)), TFT_BLACK);
     // Update graph data
     memmove(graphData, graphData + 1, (GRAPH_WIDTH - 1) * sizeof(double));
-    graphData[GRAPH_WIDTH - 1] = GRAPH_HEIGHT - map(input, 0, 200, 0, GRAPH_HEIGHT);
-    // Clear and redraw graph area
-    tft.fillRect(0, 0, GRAPH_WIDTH, GRAPH_HEIGHT + 1, TFT_BLACK);
-    // Draw dashed red line for setpoint
-    double setpointY = GRAPH_HEIGHT - map(setpoint, 0, 200, 0, GRAPH_HEIGHT); // Map setpoint to graph Y range
-    for (int x = 10; x < 310; x += 10) // Dashed pattern: line every 10px
-        tft.drawLine(x, setpointY, x + 5, setpointY, TFT_RED); // Short dashes
+    graphData[GRAPH_WIDTH - 1] = input;
     // Draw data
-    for (int i = 1; i < GRAPH_WIDTH; i++)
-        tft.drawPixel(i - 1, graphData[i], graphData[i] > setpointY ? TFT_GREEN : TFT_YELLOW);
+    for(int i = 1; i < GRAPH_WIDTH; i++)
+        tft.drawPixel(i - 1, GRAPH_HEIGHT - ((int)(graphData[i] * 0.35)), TFT_GREEN);
 
-    // Display solenoid status
     tft.setTextSize(2);
-    tft.setCursor(0, GRAPH_HEIGHT + 10);
-    tft.setTextColor(solenoidState ? TFT_GREEN : TFT_RED, TFT_BLACK);
-    tft.printf("Solenoid: %16s",solenoidState ? "PRESSURIZE" : "RELEASE");
-
+    if(drawOnce){
+        // Display solenoid status
+        tft.setCursor(0, GRAPH_HEIGHT + 10);
+        tft.setTextColor(startFlag ? TFT_GREEN : TFT_RED, TFT_BLACK);
+        tft.printf("Solenoid: %16s",startFlag ? "PRESSURIZE" : "RELEASE");
+        // Display pressure value
+        tft.setCursor(0, GRAPH_HEIGHT + 30);
+        tft.setTextColor(TFT_WHITE, TFT_BLACK);
+        tft.printf("Current Pressure: ");
+        // Display timestamp and timestep
+        tft.setCursor(0, GRAPH_HEIGHT + 50);
+        tft.print("Timestamp: ");
+        tft.setCursor(0, GRAPH_HEIGHT + 70);
+        tft.print("Timestep: ");
+        drawOnce = 0;
+    }
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);
     // Display pressure value
-    tft.setCursor(0, GRAPH_HEIGHT + 30);
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
-    tft.printf("Current Pressure: %8.3f", input);
-
+    tft.setCursor(216, GRAPH_HEIGHT + 30);
+    tft.printf("%8.3f", input);
     // Display timestamp and timestep
-    tft.setCursor(0, GRAPH_HEIGHT + 50);
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
-    tft.printf("Timestamp: %15.3f", loopTime);
-    tft.setCursor(0, GRAPH_HEIGHT + 70);
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
-    tft.printf("Timestep: %16.3f", dT);
+    tft.setCursor(132, GRAPH_HEIGHT + 50);
+    tft.printf("%15.3f", loopTime);
+    tft.setCursor(120, GRAPH_HEIGHT + 70);
+    tft.printf("%16i", dT);
 
     #if SERIAL_DEBUG_OUTPUT
         // Debug output
         // TODO: instead of debug log analysis perform onboard filtering, FFT, and HR systolic/diastolic
-        Serial.printf("Loop Step: %.4f | Loop Time: %.2f | Pressure: %.2f | Solenoid: %s\n", dT, loopTime, input, solenoidState ? "PRESSURIZE" : "RELEASE");
+        Serial.printf("Loop Step: %.4f | Loop Time: %.2f | Pressure: %.2f | Solenoid: %s\n", dT, loopTime, input, startFlag ? "PRESSURIZE" : "RELEASE");
     #endif
 
     // delay(10); // Update interval
