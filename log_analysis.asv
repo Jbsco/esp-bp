@@ -1,8 +1,7 @@
 clear all; close all; clc;
 % Enhanced pressure log parser and analyzer
 
-read_type = "log"
-read_type = "serial"
+read_type 
 
 filename = 'log_12_hs.txt';
 lines = readlines(filename);
