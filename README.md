@@ -3,7 +3,7 @@
 
 This project is a blood pressure analysis system produced for a Digital Signal Processing course, using the LilyGO T-Display-S3 ESP32 board. It actuates a small air pump and air valve solenoid via MOSFET drivers and microcontroller control. The system features a real-time graph of pressure values displayed on the onboard TFT, as well as compile-time options to include serial debugging and a special "hi-speed" mode which disables the TFT update while logging.
 
-**Note: This is an academic project and is not intended to replace real medical equipment. This is not a professionally developed or built device and should not be used to make any assessment of health or diagnose medical conditions.**
+**Note: This is an academic project and is not intended to replace real medical equipment. This is not a professionally developed or built device and should not be used to make any assessment of health or otherwise be used to diagnose medical conditions.**
 
 ---
 
@@ -103,6 +103,14 @@ TODO
 MATLAB:
 The included MATLAB script can begin pressurization as well as process data over serial. This is most effective when using the hi-speed debug mode, as sample rates nearly double when skipping TFT updates. The loop time is around 6ms in this mode, so sampling is fast and data is improved. The script plots the pressure run, performs an FFT, applies a band-pass filter and adds another plot/FFT, then applies a narrower band-pass and ands a final plot/FFT. In the majority of cases, the subject's pulse is clearly visible after filtering. Systolic and diastolic pressure are easy to infer, but future improvements will include automated heart rate frequency detection and dynamic configuration for the second filter iteration, as well as threshold identification of systolic and diastolic pressure.
 ![log_9_hs](https://github.com/user-attachments/assets/7f5b74f6-9abb-4c8a-9af0-1fabcf2bfbc7)
+
+Some Linux installations of MATLAB may encounter a lock file error for ttyACM0. A shell script is provided to temporarily resolve this issue by creating the required file with permissions to allow MATLAB to proceed. It runs the following commands (with ttyACM0 as the default argument, but can take other ports as the argument instead)
+
+```
+sudo touch /run/lock/LCK..ttyACM0
+sudo chgrp $USER /run/lock/LCK..ttyACM0
+sudo chown $USER /run/lock/LCK..ttyACM0
+```
 
 ---
 
