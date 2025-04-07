@@ -30,6 +30,7 @@ This project is a blood pressure analysis system produced for a Digital Signal P
    - 5V USB power supply for the LilyGO board.
 5. **Other Components**:
    - Level shifter or MOSFET (e.g., IRLB3813, IRLZ44N) for solenoid control.
+   - A blood-pressure cuff and related fittings, as necessary (this will depend primarily on selected components).
 
 ---
 
@@ -99,8 +100,8 @@ TODO
 ---
 
 ## Results
-TODO
 MATLAB:
+The included MATLAB script can begin pressurization as well as process data over serial. This is most effective when using the hi-speed debug mode, as sample rates nearly double when skipping TFT updates. The loop time is around 6ms in this mode, so sampling is fast and data is improved. The script plots the pressure run, performs an FFT, applies a band-pass filter and adds another plot/FFT, then applies a narrower band-pass and ands a final plot/FFT. In the majority of cases, the subject's pulse is clearly visible after filtering. Systolic and diastolic pressure are easy to infer, but future improvements will include automated heart rate frequency detection and dynamic configuration for the second filter iteration, as well as threshold identification of systolic and diastolic pressure.
 ![log_9_hs](https://github.com/user-attachments/assets/7f5b74f6-9abb-4c8a-9af0-1fabcf2bfbc7)
 
 ---
@@ -112,6 +113,6 @@ MATLAB:
 ---
 
 ## References
-1.https://github.com/sparkfun/SparkFun_MicroPressure_Arduino_Library
+1. https://github.com/sparkfun/SparkFun_MicroPressure_Arduino_Library
 2. https://www.sparkfun.com/sparkfun-qwiic-micropressure-sensor.html
 3. https://registry.platformio.org/libraries/sparkfun/SparkFun%20MicroPressure%20Library
