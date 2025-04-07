@@ -20,7 +20,7 @@ This project is a blood pressure analysis system produced for a Digital Signal P
 ### Recommended Components
 1. **Microcontroller**:
    - [LilyGO T-Display-S3 (ESP32-S3)](https://github.com/Xinyuan-LilyGO/T-Display-S3)
-2. **pH Sensor**:
+2. **Pressure Sensor**:
    - [SparkFun Qwiic MicroPressure Sensor](https://www.sparkfun.com/sparkfun-qwiic-micropressure-sensor.html)
 3. **DC Air Pump**:
    - Any 4.5V 1-3 LPM DC air pump (e.g., [Adafruit Air Pump And Vacuum Dc Motor - 4.5 V And 2.5 Lpm - Zr370-02pm](https://www.electromaker.io/shop/product/air-pump-and-vacuum-dc-motor-45-v-and-25-lpm-zr370-02pm)).
