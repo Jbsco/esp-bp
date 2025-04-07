@@ -112,4 +112,6 @@ MATLAB:
 ---
 
 ## References
-1. TODO
+1.https://github.com/sparkfun/SparkFun_MicroPressure_Arduino_Library
+2. https://www.sparkfun.com/sparkfun-qwiic-micropressure-sensor.html
+3. https://registry.platformio.org/libraries/sparkfun/SparkFun%20MicroPressure%20Library
