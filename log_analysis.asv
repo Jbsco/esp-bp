@@ -2,8 +2,8 @@ clear all; close all; clc;
 % Enhanced pressure log parser and analyzer
 
 %% Choose between reading a log file from serial output or serial direct
-read_type = "log"
-%read_type = "serial"
+read_type = "log";
+%read_type = "serial";
 
 % NOTE: Some Linux MATLAB installations may encounter lock file errors, try:
 % sudo touch /run/lock/LCK..ttyACM0
@@ -56,7 +56,7 @@ if read_type == "serial"
     % Close serial port
     clear s;
 else
-    filename = 'run logs/log_12_hs.txt';
+    filename = 'run logs/log_11_hs.txt';
     lines = readlines(filename);
     
     loop_time = [];
@@ -145,37 +145,71 @@ ylabel('Magnitude');
 title('Filtered FFT: Heart Rate Range (0–5 Hz)');
 grid on;
 
-%% Iterate
+%% Iterate on peak frequency
+[peak_mag, idx_peak] = max(mag);
+peak_freq = f(idx_peak);
+% Also find the Q factor to use in threshold value relax factor
+% Find -3dB bandwidth (half power)
+half_power = peak_mag / sqrt(2);  % -3 dB point
+% Search for left and right -3dB crossing
+left_idx = find(mag(1:idx_peak) < half_power, 1, 'last');
+right_idx = find(mag(idx_peak:end) < half_power, 1, 'first') + idx_peak - 1;
+% Interpolate for better precision
+f_left = interp1(mag(left_idx:left_idx+1), f(left_idx:left_idx+1), half_power);
+f_right = interp1(mag(right_idx-1:right_idx), f(right_idx-1:right_idx), half_power);
+bandwidth = f_right - f_left;
+Q = peak_freq / bandwidth
+thresh_relax = Q / 15
 
 % Bandpass filter: 0.5–3 Hz
 bpFilt = designfilt('bandpassiir', ...
     'FilterOrder', 6, ...
-    'HalfPowerFrequency1', 1.25, ...
-    'HalfPowerFrequency2', 1.75, ...
+    'HalfPowerFrequency1', peak_freq-0.25, ...
+    'HalfPowerFrequency2', peak_freq+0.25, ...
     'SampleRate', fs);
 
 p_filtered2 = filtfilt(bpFilt, p_filtered);
-thresh1 = 0.06;
-thresh2 = 0.10;
 
+% Get the envelope from the Hilbert transform
+pressure_envelope = abs(hilbert(p_filtered2.^2));
+fc = 0.5; % cutoff frequency for smoothing (Hz)
+[b, a] = butter(4, fc/(fs/2));  % 4th-order Butterworth
+env_smooth = filtfilt(b, a, pressure_envelope);  % zero-phase filtering
+
+% Set thresholds and find crossings from transformed pressure
+thresh1 = 0.45*max(env_smooth)/thresh_relax;
+thresh2 = 0.55*max(env_smooth)/thresh_relax;
 function ind = crossing(x, thresh)
     % Returns indices where signal x crosses threshold going upwards or downwards
     ind = find((x(1:end-1) < thresh & x(2:end) >= thresh) | ...
                (x(1:end-1) > thresh & x(2:end) <= thresh));
 end
-
-systolic = crossing(p_filtered2.^2, thresh1)
-diastolic = crossing(p_filtered2.^2, thresh2)
+systolic = crossing(env_smooth, thresh1);
+diastolic = crossing(env_smooth, thresh2);
+systolic = systolic(1);
+diastolic = diastolic(end);
 
 % Plot 3: Filtered signal (Heart Rate Only)
 subplot(3,2,5);
-plot(t_uniform, p_filtered2, 'r');
+plot(t_uniform, env_smooth, 'r');
 xlabel('Time [s]');
 ylabel('Filtered Pressure');
-title('Bandpass Filtered Pressure (1.25–1.75 Hz)^2');
+title('Pressure Transform (Filtered Hilbert^2)');
 grid on; hold on;
-yline(thresh1,'--');
-plot(t_uniform(systolic(1)),p_filtered2((systolic(1))))
+yline(thresh1,'--','Color',"#0072BD");
+yline(thresh2,'--','Color',"#D95319");
+sys_print = sprintf('Systolic: %.3f\n',p_uniform(systolic))
+dia_print = sprintf('Diastolic: %.3f\n',p_uniform(diastolic))
+plot(t_uniform(systolic),env_smooth(systolic),'o','Color',"#0072BD");
+plot(t_uniform(diastolic),env_smooth(diastolic),'o','Color',"#D95319");
+xline(t_uniform(systolic),'--','Color',"#0072BD");
+xline(t_uniform(diastolic),'--','Color',"#D95319");
+subplot(3,2,3); hold on;
+xline(t_uniform(systolic),'--','Color',"#0072BD");
+xline(t_uniform(diastolic),'--','Color',"#D95319");
+subplot(3,2,1); hold on;
+xline(t_uniform(systolic),'--','Color',"#0072BD");
+xline(t_uniform(diastolic),'--','Color',"#D95319");
 
 % Plot 4: Filtered FFT (0–5 Hz)
 Y = fft(p_filtered2);
