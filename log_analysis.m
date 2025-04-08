@@ -2,8 +2,8 @@ clear all; close all; clc;
 % Enhanced pressure log parser and analyzer
 
 %% Choose between reading a log file from serial output or serial direct
-% read_type = "log"
-read_type = "serial"
+read_type = "log";
+%read_type = "serial";
 
 % NOTE: Some Linux MATLAB installations may encounter lock file errors, try:
 % sudo touch /run/lock/LCK..ttyACM0
@@ -56,7 +56,7 @@ if read_type == "serial"
     % Close serial port
     clear s;
 else
-    filename = 'run logs/log_12_hs.txt';
+    filename = 'run logs/log_9_hs.txt';
     lines = readlines(filename);
     
     loop_time = [];
@@ -155,14 +155,34 @@ bpFilt = designfilt('bandpassiir', ...
     'SampleRate', fs);
 
 p_filtered2 = filtfilt(bpFilt, p_filtered);
+thresh1 = 0.08;
+thresh2 = 0.06;
+%% TODO: get thresholds as percentage of the max, 0.08/0.06 working for log_9_hs
+
+function ind = crossing(x, thresh)
+    % Returns indices where signal x crosses threshold going upwards or downwards
+    ind = find((x(1:end-1) < thresh & x(2:end) >= thresh) | ...
+               (x(1:end-1) > thresh & x(2:end) <= thresh));
+end
+
+systolic = crossing(p_filtered2.^2, thresh1);
+diastolic = crossing(p_filtered2.^2, thresh2);
+systolic = systolic(1);
+diastolic = diastolic(end);
 
 % Plot 3: Filtered signal (Heart Rate Only)
 subplot(3,2,5);
-plot(t_uniform, p_filtered2, 'r');
+plot(t_uniform, p_filtered2.^2, 'r');
 xlabel('Time [s]');
 ylabel('Filtered Pressure');
-title('Bandpass Filtered Pressure (1.25–1.75 Hz)');
-grid on;
+title('Bandpass Filtered Pressure (1.25–1.75 Hz)^2');
+grid on; hold on;
+yline(thresh1,'--');
+yline(thresh2,'--');
+plot(t_uniform(systolic),p_filtered2(systolic)^2,'o');
+plot(t_uniform(diastolic),p_filtered2(diastolic)^2,'o');
+disp(sprintf('Systolic: %f',p_uniform(systolic)))
+disp(sprintf('Diastolic: %f',p_uniform(diastolic)))
 
 % Plot 4: Filtered FFT (0–5 Hz)
 Y = fft(p_filtered2);
