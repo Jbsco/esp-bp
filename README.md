@@ -101,16 +101,17 @@ TODO
 
 ## Results
 MATLAB:
-The included MATLAB script can begin pressurization as well as process data over serial. This is most effective when using the hi-speed debug mode, as sample rates nearly double when skipping TFT updates. The loop time is around 6ms in this mode, so sampling is fast and data is improved. The script plots the pressure run, performs an FFT, applies a band-pass filter and adds another plot/FFT, then applies a narrower band-pass and ands a final plot/FFT. In the majority of cases, the subject's pulse is clearly visible after filtering. Systolic and diastolic pressure are easy to infer, but future improvements will include automated heart rate frequency detection and dynamic configuration for the second filter iteration, as well as threshold identification of systolic and diastolic pressure.
-![log_9_hs](https://github.com/user-attachments/assets/7f5b74f6-9abb-4c8a-9af0-1fabcf2bfbc7)
+The included MATLAB script can begin pressurization as well as process data over serial. This is most effective when using the hi-speed debug mode, as sample rates nearly double when skipping TFT updates. The loop time is around 6ms in this mode, so sampling is fast and data is improved. The script plots the pressure run, performs an FFT, applies a band-pass filter and adds another plot/FFT, then applies a narrower band-pass and ands a final plot/FFT. The Q-factor of the second FFT is also determined and used as a factor to relax thresholding, which is used to determine systolic and diastolic pressure output to the console. In the majority of cases, the subject's pulse is clearly visible after filtering, and the output values are close to results from a reference device. Future improvements will include improvement to the dynamic thresholding pipeline to improve accuracy of systolic and diastolic pressure output.
+![log_9_hs](https://github.com/user-attachments/assets/d8d6c571-79cc-472f-9f94-d6884d8efff7)
 
-Some Linux installations of MATLAB may encounter a lock file error for ttyACM0. A shell script is provided to temporarily resolve this issue by creating the required file with permissions to allow MATLAB to proceed. It runs the following commands (with ttyACM0 as the default argument, but can take other ports as the argument instead)
+Some Linux installations of MATLAB may encounter a lock file error for ttyACM0. A shell script is provided to temporarily resolve this issue by creating the required file with permissions to allow MATLAB to proceed. It runs the following commands:
 
 ```
 sudo touch /run/lock/LCK..ttyACM0
 sudo chgrp $USER /run/lock/LCK..ttyACM0
 sudo chown $USER /run/lock/LCK..ttyACM0
 ```
+The script uses ttyACM0 as the default argument, but can take other ports as the argument instead.
 
 ---
 

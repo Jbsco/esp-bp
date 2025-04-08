@@ -56,7 +56,7 @@ if read_type == "serial"
     % Close serial port
     clear s;
 else
-    filename = 'run logs/log_11_hs.txt';
+    filename = 'run logs/log_9_hs.txt';
     lines = readlines(filename);
     
     loop_time = [];
