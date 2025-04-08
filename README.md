@@ -14,6 +14,9 @@ This project is a blood pressure analysis system produced for a Digital Signal P
 - **Status Indicators**: Shows current solenoid status (ON/OFF) and pressure value, as well as timestamp and loop duration (sample time).
 - **Self Calibrating**: A robust calibration algorithm adjusts to atmospheric pressure, and can be recalibrated any time.
 
+![PXL_20250408_184445834](https://github.com/user-attachments/assets/b2bf1973-43b4-4620-ab3b-306a7eac417f)
+
+
 ---
 
 ## Hardware Requirements
@@ -91,6 +94,8 @@ pio run --target upload
 ## Notes on Pressure Calibration
 - Calibrate the pressure sensor with the programmed procedure.
 - Simply press button 2. The system will release pressure and wait for the difference between consectutive measurements to be less than 0.01 mmHg 50 times. After this, 100 measurements are averaged. All pressure readings will have this value subtracted, and readings will be relative to atmospheric pressure.
+
+https://github.com/user-attachments/assets/655ae936-46af-4a66-a9a8-09aed62cbf73
 
 ---
 
