@@ -2,8 +2,8 @@ clear all; close all; clc;
 % Enhanced pressure log parser and analyzer
 
 %% Choose between reading a log file from serial output or serial direct
-read_type = "log";
-%read_type = "serial";
+%read_type = "log";
+read_type = "serial";
 
 % NOTE: Some Linux MATLAB installations may encounter lock file errors, try:
 % sudo touch /run/lock/LCK..ttyACM0
