@@ -2,8 +2,8 @@ clear all; close all; clc;
 % Enhanced pressure log parser and analyzer
 
 %% Choose between reading a log file from serial output or serial direct
-%read_type = "log";
-read_type = "serial";
+read_type = "log";
+% read_type = "serial";
 
 % NOTE: Some Linux MATLAB installations may encounter lock file errors, try:
 % sudo touch /run/lock/LCK..ttyACM0
@@ -184,10 +184,10 @@ function ind = crossing(x, thresh)
     ind = find((x(1:end-1) < thresh & x(2:end) >= thresh) | ...
                (x(1:end-1) > thresh & x(2:end) <= thresh));
 end
-systolic = crossing(env_smooth, thresh1);
-diastolic = crossing(env_smooth, thresh2);
-systolic = systolic(1);
-diastolic = diastolic(end);
+diastolic = crossing(env_smooth, thresh1);
+systolic = crossing(env_smooth, thresh2);
+diastolic = diastolic(1);
+systolic = systolic(end);
 
 % Plot 3: Filtered signal (Heart Rate Only)
 subplot(3,2,5);
@@ -198,18 +198,18 @@ title('Pressure Transform (Filtered Hilbert^2)');
 grid on; hold on;
 yline(thresh1,'--','Color',"#0072BD");
 yline(thresh2,'--','Color',"#D95319");
-sys_print = sprintf('Systolic: %.3f\n',p_uniform(systolic))
 dia_print = sprintf('Diastolic: %.3f\n',p_uniform(diastolic))
-plot(t_uniform(systolic),env_smooth(systolic),'o','Color',"#0072BD");
-plot(t_uniform(diastolic),env_smooth(diastolic),'o','Color',"#D95319");
-xline(t_uniform(systolic),'--','Color',"#0072BD");
-xline(t_uniform(diastolic),'--','Color',"#D95319");
+sys_print = sprintf('Systolic: %.3f\n',p_uniform(systolic))
+plot(t_uniform(diastolic),env_smooth(diastolic),'o','Color',"#0072BD");
+plot(t_uniform(systolic),env_smooth(systolic),'o','Color',"#D95319");
+xline(t_uniform(diastolic),'--','Color',"#0072BD");
+xline(t_uniform(systolic),'--','Color',"#D95319");
 subplot(3,2,3); hold on;
-xline(t_uniform(systolic),'--','Color',"#0072BD");
-xline(t_uniform(diastolic),'--','Color',"#D95319");
+xline(t_uniform(diastolic),'--','Color',"#0072BD");
+xline(t_uniform(systolic),'--','Color',"#D95319");
 subplot(3,2,1); hold on;
-xline(t_uniform(systolic),'--','Color',"#0072BD");
-xline(t_uniform(diastolic),'--','Color',"#D95319");
+xline(t_uniform(diastolic),'--','Color',"#0072BD");
+xline(t_uniform(systolic),'--','Color',"#D95319");
 
 % Plot 4: Filtered FFT (0–5 Hz)
 Y = fft(p_filtered2);
