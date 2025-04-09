@@ -18,6 +18,8 @@ This project is a blood pressure analysis system produced for a Digital Signal P
 
 
 ---
+## Background
+Blood pressure is an important biometric widely used in the healthcare and medical device industry. Systolic pressure is a measure of the force of blood flow as it is pumped out of the heart. Diastolic pressure is a measure of the blood pressure in between heartbeats, while the heart is filling with blood. Measurement of these values is typically measured by ear using a sphygmomanometer. The typical procedure is to pressurize the subject's arm cuff to a high pressure, typically 180-200 mmHg for the average adult, and then to slowly release pressure until the pulse is detectable (systolic), noting this value, and then continuing to release pressure until the pulse is no longer detectable (diastolic). Many devices exist which automatically perform this procedure, some of which measure these values during the pressurization stage. This procedure is an ideal project to develop for applications in digital signal processing.
 
 ## Hardware Requirements
 ### Recommended Components
@@ -124,8 +126,8 @@ Run 1:
 
 Output:
 ```
-Systolic: 79.084
-Diastolic: 138.463
+Diastolic: 79.084
+Systolic: 138.463
 ```
 
 Run 2:
@@ -134,8 +136,8 @@ Run 2:
 
 Output:
 ```
-Systolic: 82.020
-Diastolic: 133.168
+Diastolic: 82.020
+Systolic: 133.168
 ```
 
 Run 3:
@@ -144,11 +146,11 @@ Run 3:
 
 Output:
 ```
-Systolic: 82.768
-Diastolic: 120.599
+Diastolic: 82.768
+Systolic: 120.599
 ```
 
-Not all values were observed to be in agreement. Run #3 diastolic was the furthest from what was observed on the reference device. Further testing on subjects with a wider range of resting heart rate is needed before further adjustment to the calculation and processing.
+Not all values were observed to be in agreement. Run #3 systolic pressure was the furthest from what was observed on the reference device. Further testing on subjects with a wider range of resting heart rate is needed before further adjustment to the calculation and processing.
 
 ---
 
