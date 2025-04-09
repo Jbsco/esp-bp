@@ -81,6 +81,11 @@ Connect the board and run the following in PlatformIO:
 pio run --target upload
 ```
 
+Monitor directly in the terminal with:
+```
+pio run --target monitor
+```
+
 ---
 
 ## Usage
@@ -89,7 +94,7 @@ pio run --target upload
 3. Monitor the real-time graph and solenoid status on the TFT display.
 4. Use the serial monitor (baud: 115200) for debugging.
 5. Use the MATLAB script to perform analysis directly.
-6. Adjust debug modes as needed.
+6. Adjust debug modes as needed and re-flash.
 
 ---
 
@@ -150,13 +155,18 @@ Diastolic: 82.768
 Systolic: 120.599
 ```
 
-Not all values were observed to be in agreement. Run #3 systolic pressure was the furthest from what was observed on the reference device. Further testing on subjects with a wider range of resting heart rate is needed before further adjustment to the calculation and processing.
+---
+
+## Conclusion
+The system design and measurement method was sufficient to make accurate recordings of blood pressure to record systolic and diastolic values. Filtering of the recorded signal was very effective at isolating heart rate. Processing this data could be refined further. Detrend strategies were tested alongside FFT and filtering, but thresholding proved to be a more immediately accessible method to determine systolic and diastolic values. Not all values were observed to be in agreement with the reference device. Run #3 systolic pressure was the furthest from what was observed on the reference device, but generally most values were within single-digit ranges. Further testing on subjects with a wider range of resting heart rate is needed before further adjustment to the calculation and processing, as resting heart is known to vary between subjects and over the course of a day. This repository will continue to be maintained as a resource for other engineering students working with embedded systems or in biomedical fields.
 
 ---
 
 ## Future Enhancements
-- Add photos/graphics of device wiring, setup examples, & results to README.
+- Test additional subjects with a wider range of resting blood pressure, and refine calculation and processing algorithm.
 - Extend to any other possible control outputs.
+- Translate MATLAB analysis to Python.
+- Implement processing pipeline onboard ESP32.
 
 ---
 
@@ -164,3 +174,7 @@ Not all values were observed to be in agreement. Run #3 systolic pressure was th
 1. https://github.com/sparkfun/SparkFun_MicroPressure_Arduino_Library
 2. https://www.sparkfun.com/sparkfun-qwiic-micropressure-sensor.html
 3. https://registry.platformio.org/libraries/sparkfun/SparkFun%20MicroPressure%20Library
+
+## Acknowledgements
+1. Dr. Talles Santos, Univeristy of Colorado Boulder
+2. Confluence Hall Labs - Colorado Mesa University
