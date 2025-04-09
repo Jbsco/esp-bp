@@ -99,11 +99,6 @@ https://github.com/user-attachments/assets/655ae936-46af-4a66-a9a8-09aed62cbf73
 
 ---
 
-## Display Output & Sampling Performance
-TODO
-
----
-
 ## Results
 MATLAB:
 The included MATLAB script can begin pressurization as well as process data over serial. This is most effective when using the hi-speed debug mode, as sample rates nearly double when skipping TFT updates. The loop time is around 6ms in this mode, so sampling is fast and data is improved. The script plots the pressure run, performs an FFT, applies a band-pass filter and adds another plot/FFT, then applies a narrower band-pass and ands a final plot/FFT. The Q-factor of the second FFT is also determined and used as a factor to relax thresholding, which is used to determine systolic and diastolic pressure output to the console. In the majority of cases, the subject's pulse is clearly visible after filtering, and the output values are close to results from a reference device. Future improvements will include improvement to the dynamic thresholding pipeline to improve accuracy of systolic and diastolic pressure output.
@@ -117,6 +112,43 @@ sudo chgrp $USER /run/lock/LCK..ttyACM0
 sudo chown $USER /run/lock/LCK..ttyACM0
 ```
 The script uses ttyACM0 as the default argument, but can take other ports as the argument instead.
+
+---
+
+## Output & Sampling Performance Comparison
+The system was compared with a typical battery-operated system to check accuracy. It should be noted that automated devices may not be accurate themselves. Generally, the performance is expected to be similar, within 10mmHg or so.
+
+Run 1:
+
+![run_1_sys](https://github.com/user-attachments/assets/b6e999df-b0a4-45bc-a8e3-482f335e7b90)![run_1_ref](https://github.com/user-attachments/assets/6364d8b9-189a-4050-b98f-bf82d5a7f899)
+
+Output:
+```
+Systolic: 79.084
+Diastolic: 138.463
+```
+
+Run 2:
+
+![run_2_sys](https://github.com/user-attachments/assets/f39aca99-e9b8-4639-aa6c-feaf17c553e4)![run_2_ref](https://github.com/user-attachments/assets/2f8da617-1245-49b5-91b0-3402e124c931)
+
+Output:
+```
+Systolic: 82.020
+Diastolic: 133.168
+```
+
+Run 3:
+
+![run_3_sys](https://github.com/user-attachments/assets/76ffffbd-6f63-4977-8b15-242111560419)![run_3_ref](https://github.com/user-attachments/assets/420ea4b1-55eb-4875-a5f9-4043666529b9)
+
+Output:
+```
+Systolic: 82.768
+Diastolic: 120.599
+```
+
+Not all values were observed to be in agreement. Run #3 diastolic was the furthest from what was observed on the reference device. Further testing on subjects with a wider range of resting heart rate is needed before further adjustment to the calculation and processing.
 
 ---
 
