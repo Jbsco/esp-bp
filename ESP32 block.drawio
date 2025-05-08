@@ -1,0 +1,101 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:138.0) Gecko/20100101 Firefox/138.0" version="27.0.2">
+  <diagram name="Page-1" id="09nChIZGOkw6GjOcZzXN">
+    <mxGraphModel dx="889" dy="2171" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="5T6_v61IL-QROMkdmYM8-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="5T6_v61IL-QROMkdmYM8-1" target="5T6_v61IL-QROMkdmYM8-6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-1" value="&lt;div&gt;Calibrate&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
+          <mxGeometry x="20" y="297.5" width="220" height="122" as="geometry" />
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="5T6_v61IL-QROMkdmYM8-3" target="5T6_v61IL-QROMkdmYM8-4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-3" value="50x 5ms &lt;span data-huuid=&quot;4915709712812794536&quot;&gt;&lt;span&gt;Δmeas &amp;lt; 0.01&lt;/span&gt;&lt;/span&gt;" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="330" width="160" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-4" value="avg(100x meas) = atmos" style="shape=trapezoid;perimeter=trapezoidPerimeter;whiteSpace=wrap;html=1;fixedSize=1;flipV=1;" parent="1" vertex="1">
+          <mxGeometry x="45" y="380" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="5T6_v61IL-QROMkdmYM8-6" target="5T6_v61IL-QROMkdmYM8-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="160" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="350" y="260" />
+              <mxPoint x="130" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-9" value="Button 2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;" parent="5T6_v61IL-QROMkdmYM8-8" vertex="1" connectable="0">
+          <mxGeometry x="0.1085" y="-2" relative="1" as="geometry">
+            <mxPoint x="76" y="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-10" value="&lt;div&gt;Button 1&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Serial input = &quot;start&quot;&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=none;" parent="1" source="5T6_v61IL-QROMkdmYM8-6" target="5T6_v61IL-QROMkdmYM8-11" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="350" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-6" value="&lt;div&gt;Idle State&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Pump off&lt;/div&gt;&lt;div&gt;Solenoid open&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="290" y="324.5" width="120" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="5T6_v61IL-QROMkdmYM8-11" target="5T6_v61IL-QROMkdmYM8-6" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="342" />
+              <mxPoint x="810" y="342" />
+              <mxPoint x="810" y="490" />
+              <mxPoint x="350" y="490" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-13" value="&lt;div&gt;meas &amp;gt; 200mmHg&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Serial input = &quot;stop&quot;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;" parent="5T6_v61IL-QROMkdmYM8-12" vertex="1" connectable="0">
+          <mxGeometry x="-0.0774" relative="1" as="geometry">
+            <mxPoint x="-48" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="5T6_v61IL-QROMkdmYM8-11" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="130" y="260" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="670" y="240" />
+              <mxPoint x="130" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-11" value="&lt;div&gt;Measurement State&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Solenoid closed&lt;/div&gt;&lt;div&gt;Pump on&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="560" y="267" width="220" height="183" as="geometry" />
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="5T6_v61IL-QROMkdmYM8-14" target="5T6_v61IL-QROMkdmYM8-15" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="730" y="350" />
+              <mxPoint x="615" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-14" value="&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;printSerial(meas)&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;printTFT(meas)&lt;/font&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="690" y="370" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="5T6_v61IL-QROMkdmYM8-15" target="5T6_v61IL-QROMkdmYM8-14" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="615" y="430" />
+              <mxPoint x="730" y="430" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-15" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;meas = read(I2C)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="570" y="370" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="5T6_v61IL-QROMkdmYM8-20" value="&lt;span&gt;Button 2&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="780.0030434782607" y="250" as="geometry">
+            <mxPoint x="-143" y="-3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
